@@ -1,0 +1,132 @@
+/// @namespace https://example.org/ontologia-portal-transparencia-es/base-receitas#
+ontology base-receitas
+import nucleo from <../../nucleo/nucleo.tonto>
+
+
+/// @pt-br O § 1º do art. 8º da Lei nº 4.320/1964 define que os itens da discriminação da receita, mencionados no art. 11 dessa lei, serão identificados por números de código decimal. Convencionou-se denominar este código de natureza de receita.
+/// Importante destacar que a classificação da receita orçamentária por natureza é utilizada por todos os entes da Federação e visa identificar a origem do recurso segundo o fato gerador: acontecimento real que ocasionou o ingresso da receita nos cofres públicos.
+/// A classificação por Natureza de Receita Orçamentária é composta por um código de oito dígitos numéricos que representam: a Categoria Econômica, a Origem, a Espécie, os Desdobramentos e o Tipo de Receita.
+/// Cite MCASP - 11º Edicao: Parte I: Seção 3.2.1
+category NaturezaDaReceita of functional-complexes{
+
+    codigoNatureza: const string [1]
+    descricaoNatureza: const string [1]
+
+    codigoCategoria: const string [1]
+    descricaoCategoria: const string [1]
+
+    codigoOrigem: const string [1]
+    descricaoOrigem: const string [1]
+
+    codigoEspecie: const string [1]
+    descricaoEspecie: const string [1]
+
+    codigoDetalhamento1: const string [1]
+    descricaoDetalhamento1: const string [1]
+
+    codigoDetalhamento2: const string [1]
+    descricaoDetalhamento2: const string [1]
+
+    codigoDetalhamento3: const string [1]
+    descricaoDetalhamento3: const string [1]
+
+    codigoTipo: const string [1]
+    descricaoTipo: const string [1]
+}
+
+
+/// No momento da arrecadação, a FR deverá ser informada no registro da realização da receita orçamentária (classe 6 do PCASP), no registro do ingresso dos recursos financeiros no ativo financeiro (classe 1 com atributo "F") e em contas de controle da Disponibilidade por Destinação de Recursos - DDR (nas classes 7 e 8 do PCASP). A partir desse momento, a FR informada para os recursos financeiros não deverá ser alterada
+/// Cite MCASP - 11º Edicao: Parte I: Seção 5.2
+roleMixin FonteDaReceita specializes nucleo.FonteOrcamentaria{
+
+    codigoFonte: const string [1]
+    descricaoFonte: const string [1]
+
+    codigoGrupoFonte: const string [1]
+    descricaoGrupoFonte: const string [1]
+
+    codigoDetalhamentoFonte: const string [1]
+    codigoDetalhamentoFonteAux: const string [1]
+    descricaoDetalhamentoFonte: const string [1]
+}
+
+
+/// @pt-br Conta é a expressão qualitativa e quantitativa de fatos de mesma natureza, que evidencia a composição, variação e estado do patrimônio, bem como de bens, direitos, obrigações e situações nele não compreendidas, mas que, direta ou indiretamente, possam vir a afetá-lo.
+/// Cite MCASP - 11º Edicao: Parte IV: Seções 2.3 ;
+category ContaContabil of functional-complexes{
+    codigo: const string [1]
+    descricao: const string [1]
+}
+
+
+
+/// @pt-br Unidade gestora responsável pela emissão da receita orçamentária.
+role UnidadeGestoraEmitenteDeReceita specializes nucleo.UnidadeGestora
+
+/// @pt-br Unidade gestora beneficiada por uma receita orçamentária emitida.
+role UnidadeGestoraBeneficiadaDeReceita specializes nucleo.UnidadeGestora
+
+
+/// @pt-br O orçamento é um importante instrumento de planejamento de qualquer entidade, seja pública ou privada, e representa o fluxo previsto de ingressos e de aplicações de recursos em determinado período.
+/// Cite MCASP - 11º Edicao: Parte I: Seção 3.1
+/// São disponibilidades de recursos financeiros que ingressam durante o exercício e que aumentam o saldo financeiro da instituição. Instrumento por meio do qual se viabiliza a execução das políticas públicas, as receitas orçamentárias são fontes de recursos utilizadas pelo Estado em programas e ações cuja finalidade precípua é atender às necessidades públicas e demandas da sociedade.
+/// Essas receitas pertencem ao Estado, transitam pelo patrimônio do Poder Público e, via de regra, por força do princípio orçamentário da universalidade, estão previstas na Lei Orçamentária Anual - LOA.
+/// Cite MCASP - 11º Edicao: Parte I: Seção 3.1.2
+kind ReceitaOrcamentaria
+
+/// @pt-br Receita orçamentária registrada emitida por uma unidade gestora e beneficiando outra unidade gestora.
+role ReceitaOrcamentariaRegistrada specializes ReceitaOrcamentaria{
+    dataEmissao: const datetime [1]
+    documento: const string [1]
+    ano: const string [1]
+}
+
+/// @pt-br Tipo de dados que agrupa os valores monetários que um Registro de Receita Orçamentária pode ter.
+datatype ValorAtreladoNaReceita {
+    valorPrevista:  const number
+    valorArrecadada:  const number
+    valorRecolhida:  const number
+    
+    valorPrevistaBruta:  const number
+    valorPrevistaDeducao:  const number
+    valorPrevistaLiquida:  const number
+    valorArrecadadaBruta:  const number
+    valorArrecadadaDeducao:  const number
+    valorArrecadadaLiquida:  const number
+    valorRecolhidaBruta:  const number
+}
+/// @pt-br Registro que associa a Receita às unidades gestoras emitentes e beneficiadas.
+relator RegistroDeReceitaOrcamentaria {
+    valorAtreladoNaReceita: ValorAtreladoNaReceita [1..*]
+
+    codigoIdUso: const string [1]
+    descricaoIdUso: const string [1]
+    tipoLancamento: const string [1]
+    dataContabilizacao: const datetime [1]
+    tipo: const string [1]
+
+    @mediation (const) [1..*]  -- temReceitaOrcamentaria -- [1] (const) ReceitaOrcamentariaRegistrada
+    @mediation [1..*] -- temUnidadeGestoraEmitenteDeReceita -- [1..*] (const) UnidadeGestoraEmitenteDeReceita
+    @mediation [1..*] -- temUnidadeGestoraBeneficiadaDeReceita -- [1..*] (const) UnidadeGestoraBeneficiadaDeReceita
+}
+
+/// @pt-br Relator que associa a Receita às classificações de natureza, fonte e conta contábil.
+relator ClassificacaoDoRegistroDeReceitaOrcamentaria {
+    @mediation (const) [1]  -- classifica -- [1] (const) RegistroDeReceitaOrcamentaria
+    @mediation [0..*] -- naturezaClassificadaPor -- [1] (const) NaturezaDaReceita
+    @mediation [0..*] -- fonteClassificadaPor -- [1] (const) FonteDaReceita
+    @mediation [0..*] -- contabilClassificadaPor -- [1] (const) ContaContabil
+}
+
+
+
+
+/**
+
+    Relacoes
+
+**/
+
+@material relation ReceitaOrcamentariaRegistrada [1..*] -- emitidaPara -- [1..*] (const) UnidadeGestoraBeneficiadaDeReceita derivedFrom RegistroDeReceitaOrcamentaria
+@material relation ReceitaOrcamentariaRegistrada [1..*] -- emitidaPor -- [1..*] (const) UnidadeGestoraEmitenteDeReceita derivedFrom RegistroDeReceitaOrcamentaria
+

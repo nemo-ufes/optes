@@ -1,0 +1,315 @@
+/// @namespace https://example.org/ontologia-portal-transparencia-es/base-despesas#
+ontology base-despesas
+import nucleo from <../../nucleo/nucleo.tonto>
+
+/// @pt-br A despesa orçamentária pública é o conjunto de dispêndios realizados pelos entes públicos para o funcionamento e manutenção dos serviços públicos prestados à sociedade.
+/// Despesa orçamentária é toda transação que depende de autorização legislativa, na forma de consignação de dotação orçamentária, para ser efetivada.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.1
+kind DespesaOrcamentaria
+
+
+/// @pt-br A classificação institucional reflete a estrutura de alocação dos créditos orçamentários e está estruturada em dois níveis hierárquicos: órgão orçamentário e unidade orçamentária. Constitui unidade orçamentária o agrupamento de serviços subordinados ao mesmo órgão ou repartição a que serão consignadas dotações próprias (art. 14 da Lei nº 4.320/1964).
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.2.1
+relator ClassificadorInstitucionalDeDespesa {
+    @mediation (const) [1]  -- [1] (const) ClassificacaoDoRegistroDeDespesaOrcamentaria
+
+    @mediation (const) [1..*]  -- [1] (const) OrgaoPublicoOrcamentarioNaDespesa
+    @mediation (const) [1..*]  -- [1] (const) UnidadeOrcamentariaNaDespesa
+
+}
+
+/// @pt-br A classificação funcional segrega as dotações orçamentárias em funções e subfunções, buscando responder basicamente à indagação "em que área" de ação governamental a despesa será realizada. A atual classificação funcional foi instituída pela Portaria nº 42/1999, do então Ministério do Orçamento e Gestão, divulgada pela Portaria SOF/ME nº 2.520/2022, e é composta de um rol de funções e subfunções prefixadas, que servem como agregador dos gastos públicos por área de ação governamental nas três esferas de Governo. Trata-se de uma classificação independente dos programas e de aplicação comum e obrigatória, no âmbito da União, dos Estados, do Distrito Federal e dos Municípios, o que permite a consolidação nacional dos gastos do setor público.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.2.2
+category ClassificadorFuncionalDeDespesa of functional-complexes {
+    codigoFuncao: const string[1]
+    descricaoFuncao: const string[1]
+    codigoSubFuncao: const string[0..1]
+    descricaoSubFuncao: const string[0..1]
+}
+/// @pt-br Toda ação do Governo está estruturada em programas orientados para a realização dos objetivos estratégicos definidos no Plano Plurianual (PPA) para o período de quatro anos. Conforme estabelecido no art. 3º da Portaria SOF/SETO/ME nº 42/1999 (divulgada pela Portaria SOF/ME nº 2.520/2022), a União, os Estados, o Distrito Federal e os Municípios estabelecerão, em atos próprios, suas estruturas de programas, códigos e identificação, respeitados os conceitos e determinações nela contidos. Ou seja, todos os entes devem ter seus trabalhos organizados por programas e ações, mas cada um estabelecerá seus próprios programas e ações de acordo com a referida Portaria
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.2.3
+category ClassificadorPorEstruturaProgramaticaDeDespesa of functional-complexes {
+    codigoPrograma: const string[1]
+    descricaoPrograma: const string[1]
+
+    codigoAcao: const string[1]
+    descricaoAcao: const string[1]
+
+    codigoSubtitulo: const string[1]
+    descricaoSubtitulo: const string[1]
+
+    codigoPlanoOrcamentario: const string[0..1]
+    descricaoPlanoOrcamentario: const string[0..1]
+}
+
+/// @pt-br A classificação da despesa orçamentária, segundo a sua natureza, compõe-se de: a. Categoria Econômica ; b. Grupo de Natureza da Despesa ; c. Elemento de Despesa.  A natureza da despesa será complementada pela informação gerencial denominada "Modalidade de Aplicação", a qual tem por finalidade indicar se os recursos são aplicados diretamente por órgãos ou entidades no âmbito da mesma esfera de Governo ou por outro ente da Federação e suas respectivas entidades, e objetiva, precipuamente, possibilitar a eliminação da dupla contagem dos recursos transferidos ou descentralizados.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.2.4
+category ClassificadorPorNaturezaDeDespesa of functional-complexes {
+    codigoCategoriaEconomica: const string[1]
+    descricaoCategoriaEconomica: const string[1]
+
+    codigoGrupoDespesa: const string[1]
+    descricaoGrupoDespesa: const string[1]
+
+    codigoModalidade: const string[1]
+    descricaoModalidade: const string[1]
+
+    codigoElementoDespesa: const string[1]
+    descricaoElementoDespesa: const string[1]
+
+    codigoSubElementoDespesa: const string[1]
+    descricaoSubElementoDespesa: const string[1]
+}
+
+/// @pt-br A classificação por fontes ou destinações de recursos (FR) tem como objetivo agrupar receitas que possuam as mesmas normas de aplicação na despesa. Em regra, as fontes ou destinações de recursos reúnem recursos oriundos de determinados códigos da classificação por natureza da receita orçamentária, conforme regras previamente estabelecidas. Por meio do orçamento público, essas fontes ou destinações são associadas a determinadas despesas de forma a evidenciar os meios para atingir os objetivos públicos.
+/// Cite MCASP - 11º Edição: Parte I: Seção 5.1
+/// Na execução orçamentária da despesa, a FR estará associada, desde o momento do empenho, às contas de controle orçamentário (classe 6 do PCASP), às contas do passivo financeiro (classe 2 com atributo “F”) e às contas de controle da disponibilidade por destinação de recursos (na classe 8)
+/// Cite MCASP - 11º Edição: Parte I: Seção 5.2
+roleMixin FonteDaDespesa specializes nucleo.FonteOrcamentaria{
+    codigoFonte: const string [1]
+    descricaoFonte: const string [1]
+
+    codigoDetalhamentoFonte: const string [1]
+    descricaoDetalhamentoFonte: const string [1]
+}
+
+/// @pt-br Poder da federação na despesa
+roleMixin PoderDaFederacaoNaDespesa specializes nucleo.PoderDaFederacao
+
+/// @pt-br Registro que associa a despesa orçamentária à unidade gestora emitente, seus classificadores e seus dados.
+relator RegistroDeDespesaOrcamentaria{
+    idRegistro: const string [1]
+
+    @mediation (const) [1]  -- temDespesaOrcamentaria --[1] (const) DespesaOrcamentariaRegistrada
+    @mediation [1..*] -- temUnidadeGestoraDaDespesa -- [1] (const) UnidadeGestoraNaDespesa
+    //dadosAnonimizados: const nucleo.DadosPessoaisAnonimizados [1]
+}
+
+/// @pt-br Agrupamento de informações referentes ao processo orçamentário de uma despesa
+/// codigo: Código do processo a que se refere à despesa
+/// descricao: Conjunto de documentos, informações ou quaisquer outros elementos referenciados por um número de controle sequencial.
+/// processoAssunto: Assunto referente ao processo.
+category ProcessoOrcamentarioDeDespesa of functional-complexes{
+    codigo: const string [1]
+    descricao: const string [1]
+    assunto: const string [1]
+}
+
+/// @pt-br Tipo de dados que agrupa os atributos referentes à retenção da despesa, junto ao credor da retenção.
+datatype RetencaoDaDespesa specializes nucleo.DadosPessoaisAnonimizados{
+    tipoRetencao: const string [1]
+    nomeTipoRetencao: const string [1]
+}
+
+/// @pt-br Tipo de dados que agrupa os atributos referentes à licitação da despesa.
+datatype LicitacaoDaDespesa{
+    tipoLicitacao: const string [1]
+    numeroLicitacao: const string [1]
+    anoLicitacao: const string [1]
+}
+
+/// @pt-br Tipo de dados que agrupa os valores monetários que um Registro de Despesa pode ter.
+datatype ValorAtreladoNoRegistroDeDespesa{
+    valorEmpenho: const number [1]
+    valorLiquidado: const number [1]
+    valorPago: const number [1]
+    valorRap: const number [1]
+}
+
+/// @pt-br Registro de Despesa orçamentária especifico para descrever o arquivo 'Despesas' no portal da transparencia
+subkind RegistroDeDespesa specializes RegistroDeDespesaOrcamentaria{
+    data: const datetime [1]
+    emenda: const string [0..1]
+    embasamento: const string [1]
+    dadosDoFavorecido: const nucleo.DadosPessoaisAnonimizadosExpandido [1]
+    valorAtrelado: const ValorAtreladoNoRegistroDeDespesa [1]
+    retencaoDaDespesa: const RetencaoDaDespesa [0..1]
+    historicoDocumento: const string [1]
+    documento: const string [1]
+    documentoEmpenho: const string [1]
+
+    idUso: const string [1]
+    descricaoIdUso: const string [1]
+
+    dadosRetencao: const RetencaoDaDespesa [0..1]
+    dadosLicitacao: const LicitacaoDaDespesa [0..1]
+
+    contratoDaDespesa: const string [1]
+
+    /// TODO:: Não incluir? Visto que no próprio dicionário fala que não tem utilidade
+    codigoGestaoEmitente: const string [1]
+
+
+    @mediation (const) [1..*]  -- [1] (const) ProcessoOrcamentarioDeDespesa
+    (const) [1..*]  -- [0..1] (const) BancoNaDespesa
+    (const) [1..*] -- [0..1] (const) ConcedorDeConvenio
+    (const) [1..*] -- [0..1] (const) RecebedorDeConvenio
+
+}
+
+/// @pt-br Tipo de dados que agrupa os valores monetários que um Registro de Restos a Pagar pode ter.
+datatype ValorAtreladoNoRegistroRestosAPagar{
+    valorNaoProcessado: const number [1]
+    valorProcessado: const number [1]
+    valorNaoProcessadoLiquidado: const number [1]
+}
+
+/// @pt-br Registro de Despesa orçamentária especifico para descrever o arquivo 'RestosAPagar' no portal da transparencia
+subkind RegistroDeRestosAPagar specializes RegistroDeDespesaOrcamentaria{
+    valorAtrelado: const ValorAtreladoNoRegistroRestosAPagar [1]
+    idRegistro: const string [1]
+
+    @mediation (const) [1..*]  -- [1] (const) PoderDaFederacaoNaDespesa
+}
+
+/// @pt-br Papel da esfera orçamentária na despesa
+roleMixin EsferaOrcamentariaNaDespesa specializes nucleo.EsferaOrcamentaria
+
+/// @pt-br Tipo de dados que agrupa os valores monetários que um Registro de Orçamento de Despesa pode ter.
+datatype ValorAtreladoNoOrcamentoDeDespesa{
+    dotacaoInicial: const number [1]
+    dotacaoAtualizada: const number [1]
+    despesaEmpenhada: const number [1]
+    despesaLiquidada: const number [1]
+    despesaPaga: const number [1]
+}
+/// @pt-br Registro de Despesa orçamentária especifico para descrever o arquivo 'OrcamentosDespesa' no portal da transparencia
+subkind RegistroDeOrcamentoDeDespesa specializes RegistroDeDespesaOrcamentaria{
+    valorAtrelado: const ValorAtreladoNoOrcamentoDeDespesa [1]
+    emenda: const string [0..1]
+    dadosDoFavorecido: const nucleo.DadosPessoaisAnonimizados [1]
+
+    @mediation (const) [1..*]  -- [1] (const) MicroRegiaoNaDespesa
+    @mediation (const) [1..*]  -- [1] (const) MunicipioNaDespesa
+}
+
+/// @pt-br Tipo de dados que agrupa os valores monetários que um Registro de Orçamento de Execução pode ter.
+datatype ValorAtreladoNoOrcamentoDeExecucaoDeDespesa{
+    valorEmpenho: const number [1]
+    valorLiquidado: const number [1]
+    valorPago: const number [1]
+    valorRap: const number [1]
+    valorOrcadoInicial: const number [1]
+    valorOrcado: const number [1]
+}
+
+/// @pt-br Registro de Despesa orçamentária especifico para descrever o arquivo 'OrcamentosExecucoes' no portal da transparencia
+subkind RegistroDeOrcamentoDeExecucao specializes RegistroDeDespesaOrcamentaria{
+    data: const datetime [1]
+    valorAtrelado: const ValorAtreladoNoOrcamentoDeExecucaoDeDespesa [1]
+}
+
+/// Conjunto de generalização dos diferentes tipos de arquivos da base de Despesas
+disjoint genset RegistrosDaDespesa where RegistroDeDespesa, RegistroDeRestosAPagar, RegistroDeOrcamentoDeDespesa, RegistroDeOrcamentoDeExecucao specializes RegistroDeDespesaOrcamentaria
+
+// subkind RegistroDeDespesaOrcamentariaComOpcionais specializes RegistroDeDespesaOrcamentaria{
+//     [1..*] -- [0..1] (const) MicroRegiaoNaDespesa
+//     [1..*] -- [0..1] (const) MunicipioNaDespesa
+//     [1..*] -- [0..1] (const) BancoNaDespesa
+//     [1..*] -- [0..1] (const) ConcedorDeConvenio
+//     [1..*] -- [0..1] (const) RecebedorDeConvenio
+// }
+
+///@pt-br MicroRegião na despesa orçamentária
+role MicroRegiaoNaDespesa specializes nucleo.MicroRegiao
+
+///@pt-br Município na despesa orçamentária
+role MunicipioNaDespesa specializes nucleo.Municipio
+
+///@pt-br Banco na despesa orçamentária
+role BancoNaDespesa specializes nucleo.Banco
+
+/// @pt-br Relator que associa a Despesa às classificações que possui.
+relator ClassificacaoDoRegistroDeDespesaOrcamentaria {
+    @mediation (const) [1]  -- classifica -- [1] (const) RegistroDeDespesaOrcamentaria
+    // @mediation [0..*] -- classificadaPor -- [1] (const) ClassificadorInstitucionalDeDespesa
+    @mediation [0..*] -- funcionalClassificadaPor -- [1] (const) ClassificadorFuncionalDeDespesa
+    @mediation [0..*] -- programaticaClassificadaPor -- [1] (const) ClassificadorPorEstruturaProgramaticaDeDespesa
+    @mediation [0..*] -- naturezaClassificadaPor -- [1] (const) ClassificadorPorNaturezaDeDespesa
+    @mediation [0..*] -- fonteClassificadaPor -- [1] (const) FonteDaDespesa
+    @mediation (const) [1..*]  -- [1] (const) EsferaOrcamentariaNaDespesa
+}
+
+///@pt-br Convenio que concede dinheiro à despesa orçamentária
+role ConcedorDeConvenio specializes nucleo.Convenio
+///@pt-br Convenio que recebe dinheiro da despesa orçamentária
+role RecebedorDeConvenio specializes nucleo.Convenio
+
+
+/// @pt-br Unidade gestora responsável pela emissão da despesa orçamentária.
+role UnidadeGestoraNaDespesa specializes nucleo.UnidadeGestora
+
+
+
+/// @pt-br Orgao público na despesa
+role OrgaoPublicoOrcamentarioNaDespesa specializes nucleo.OrgaoPublicoOrcamentario{
+
+}
+
+/// @pt-br Unidade orçamentária na despesa
+role UnidadeOrcamentariaNaDespesa specializes nucleo.UnidadeOrcamentaria{
+}
+
+
+
+
+
+/// @pt-br Empenho, segundo o art. 58 da Lei nº 4.320/1964, é o ato emanado de autoridade competente que cria para o Estado obrigação de pagamento pendente ou não de implemento de condição. Consiste na reserva de dotação orçamentária para um fim específico. 
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.4.2.1
+phase DespesaDeEmpenho specializes DespesaOrcamentaria
+
+/// @pt-br Conforme dispõe o art. 63 da Lei nº 4.320/1964, a liquidação consiste na verificação do direito adquirido pelo credor tendo por base os títulos e documentos comprobatórios do respectivo crédito
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.4.2.3
+phase DespesaDeLiquidacao specializes DespesaOrcamentaria
+
+/// @pt-br O pagamento consiste na entrega de numerário ao credor por meio de cheque nominativo, ordens de pagamentos ou crédito em conta, e só pode ser efetuado após a regular liquidação da despesa. A Lei nº 4.320/1964, no art. 64, define ordem de pagamento como sendo o despacho exarado por autoridade competente, determinando que a despesa liquidada seja paga. A ordem de pagamento só pode ser exarada em documentos processados pelos serviços de contabilidade.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.4.2.4
+phase DespesaDePagamento specializes DespesaOrcamentaria
+
+
+/// @pt-br A execução da despesa orçamentária se dá em três estágios, na forma prevista na Lei nº 4.320/1964: empenho, liquidação e pagamento.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.4.2
+/// Uma Despesa em Execução é primeiro uma DespesaDeEmpenho. Após ocorrência do fato gerador vira uma DespesaDeLiquidacao. Após a liquidação, vira uma DespesaDePagamento.
+/// Note que a Despesa não considera etapas de planejamento. Note que apenas as etapas de empenho e pagamento são consideradas no escopo vertical da ontologia para aprofundamento dos conceitos.
+disjoint complete genset EstagiosDaDespesaEmExecucao where DespesaDeEmpenho, DespesaDeLiquidacao, DespesaDePagamento specializes DespesaOrcamentaria
+
+
+/// @pt-br Despesa orçamentária registrada por uma unidade gestora para funcionamento e manutenção dos serviços públicos.
+role DespesaOrcamentariaRegistrada specializes DespesaOrcamentaria{
+    ano: const string [1]
+}
+
+
+/**
+
+RestosAPagar
+
+
+**/
+
+
+
+/// @pt-br  Despesa empenhada que foi paga no mesmo exercício vigente em que foi emitida
+subkind DespesaDeExercicioVigente specializes DespesaOrcamentaria
+
+/// @pt-br  São Restos a Pagar todas as despesas regularmente empenhadas, do exercício atual ou anterior, mas não pagas até 31 de dezembro do exercício financeiro vigente. 
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.7
+subkind DespesaDeExercicioAnterior specializes DespesaOrcamentaria
+
+/// Separação de despesas por empenhadas, mas subdividindo em "Pagas no exercício vigente ao da emissão da despesa" e "Não pagas no exercício vigente ao da emissão da despesa"
+disjoint complete genset DespesaPorVigencia where DespesaDeExercicioVigente, DespesaDeExercicioAnterior specializes DespesaOrcamentaria
+
+
+/// @pt-br  No fim do exercício, as despesas orçamentárias empenhadas e não pagas serão inscritas em restos a pagar.
+/// Cite MCASP - 11º Edição: Parte I: Seção 4.7.1
+situation TerminoDoExercicioVigenteDaDespesa{
+    @triggering (const) [1] -- triggers -- [0..*] (addOnly) CriacaoDeDespesaNaoPaga
+}
+
+
+/// @pt-br  Evento de criação de uma despesa empenhada que NÃO foi paga no mesmo exercício vigente em que foi emitida
+event CriacaoDeDespesaNaoPaga
+
+@termination relation DespesaDeExercicioVigente (const) [1]  -- [0..1] (const) CriacaoDeDespesaNaoPaga
+@creation relation DespesaDeExercicioAnterior (const) [1] -- [1] (const) CriacaoDeDespesaNaoPaga
+
